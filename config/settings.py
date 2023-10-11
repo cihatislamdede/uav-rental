@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     
     # third party
     "rest_framework",
+    "rest_framework.authtoken",
     "corsheaders",
 ]
 
@@ -157,5 +158,8 @@ CORS_ALLOWED_ORIGINS = ["http://localhost:8000"]
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
+    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
     ],
 }
