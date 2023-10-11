@@ -21,6 +21,7 @@ class UserRegisterAPIView(APIView):
                     "token": token,
                     "email": user.email,
                     "username": user.username,
+                    "is_renter": user.is_renter,
                 }
                 return Response(response, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -49,6 +50,7 @@ class UserLoginAPIView(APIView):
             "token": token.key,
             "email": user.email,
             "username": user.username,
+            "is_renter": user.is_renter,
         }
         return Response(response, status=status.HTTP_200_OK)
 

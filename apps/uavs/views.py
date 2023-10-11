@@ -2,8 +2,10 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
 from .serializers import UavBrandSerializer, UavCategorySerializer, UavSerializer
 from .models import Uav, UavBrand, UavCategory
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 
 
 # Custom Permissions
@@ -26,15 +28,24 @@ class UserCanModifyUavBrandPermission(BasePermission):
 
 
 # Uav Views
-class ListUavView(APIView):
-    def get(self, request):
-        uavs = Uav.objects.filter(is_active=True)
-        serializer = UavSerializer(uavs, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+class ListUavView(ListAPIView):
+    queryset = Uav.objects.filter(is_active=True).order_by("id")
+    serializer_class = UavSerializer
+    filterset_fields = [
+        "owner",
+        "brand",
+        "model",
+        "category",
+        "payload_capacity",
+        "maximum_speed",
+        "wingspan",
+        "endurance",
+    ]
 
 
 class CreateUavView(APIView):
     permission_classes = [IsAuthenticated & UserIsRenterPermission]
+    parser_classes = (MultiPartParser, FormParser, JSONParser)
 
     def post(self, request):
         serializer = UavSerializer(data=request.data)
@@ -55,6 +66,7 @@ class DetailUavView(APIView):
 
 class DeleteOrUpdateUavAPIView(APIView):
     permission_classes = [IsAuthenticated & UserIsRenterPermission]
+    parser_classes = (MultiPartParser, FormParser, JSONParser)
 
     def put(self, request, pk):
         uav = Uav.objects.get(pk=pk)
@@ -70,11 +82,10 @@ class DeleteOrUpdateUavAPIView(APIView):
 
 
 # Uav Category Views
-class ListUavCategoryView(APIView):
-    def get(self, request):
-        categories = UavCategory.objects.filter(is_active=True)
-        serializer = UavCategorySerializer(categories, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+class ListUavCategoryView(ListAPIView):
+    queryset = UavCategory.objects.filter(is_active=True).order_by("id")
+    serializer_class = UavCategorySerializer
+    filterset_fields = ["owner", "category", "class_name", "operating_altitude"]
 
 
 class CreateUavCategoryView(APIView):
@@ -114,11 +125,10 @@ class DeleteOrUpdateUavCategoryAPIView(APIView):
 
 
 # Uav Brand Views
-class ListUavBrandView(APIView):
-    def get(self, request):
-        brands = UavBrand.objects.filter(is_active=True)
-        serializer = UavBrandSerializer(brands, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+class ListUavBrandView(ListAPIView):
+    queryset = UavBrand.objects.filter(is_active=True).order_by("id")
+    serializer_class = UavBrandSerializer
+    filterset_fields = ["owner", "company", "country", "website"]
 
 
 class CreateUavBrandView(APIView):
