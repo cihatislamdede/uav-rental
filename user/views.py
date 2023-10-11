@@ -1,4 +1,4 @@
-from datetime import datetime
+from django.utils import timezone
 
 from django.contrib.auth import authenticate
 from rest_framework import status
@@ -41,13 +41,13 @@ class UserLoginAPIView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         user = authenticate(username=username, password=password)
-        user.last_login = datetime.now()
-        user.save()
         if not user:
             return Response(
                 {"error": "Invalid Credentials"},
                 status=status.HTTP_404_NOT_FOUND,
             )
+        user.last_login = timezone.now()
+        user.save()
         token, _ = Token.objects.get_or_create(user=user)
         response = {
             "token": token.key,
@@ -68,5 +68,5 @@ class UserLogoutAPIView(APIView):
             )
         except Exception:
             return Response(
-                status=status.HTTP_400_BAD_REQUEST, data={"error": "Bad request"}
+                status=status.HTTP_400_BAD_REQUEST, data={"error": "Something went wrong"}
             )

@@ -41,10 +41,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
     # apps
     "user",
-    
     # third party
     "rest_framework",
     "rest_framework.authtoken",
@@ -92,7 +90,7 @@ DATABASES = {
         "NAME": config("POSTGRES_DB"),
         "USER": config("POSTGRES_USER"),
         "HOST": config("POSTGRES_HOST"),
-        "PORT": config("POSTGRES_PORT"),
+        "PORT": config("POSTGRES_PORT", default=5432, cast=int),
         "PASSWORD": config("POSTGRES_PASSWORD"),
     }
 }
