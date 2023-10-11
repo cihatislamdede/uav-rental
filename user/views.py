@@ -11,8 +11,6 @@ from .serializers import UserRegisterSerializer
 
 
 class UserRegisterAPIView(APIView):
-    permission_classes = [AllowAny]
-
     def post(self, request):
         serializer = UserRegisterSerializer(data=request.data)
         if serializer.is_valid():
@@ -29,8 +27,6 @@ class UserRegisterAPIView(APIView):
 
 
 class UserLoginAPIView(APIView):
-    permission_classes = [AllowAny]
-
     def post(self, request):
         data = request.data
         username = data.get("username", None)
@@ -68,5 +64,6 @@ class UserLogoutAPIView(APIView):
             )
         except Exception:
             return Response(
-                status=status.HTTP_400_BAD_REQUEST, data={"error": "Something went wrong"}
+                status=status.HTTP_400_BAD_REQUEST,
+                data={"error": "Something went wrong"},
             )
