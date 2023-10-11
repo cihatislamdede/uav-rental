@@ -10,7 +10,7 @@ from .views import (
     ListUavBrandView,
     ListUavCategoryView,
     ListUavView,
-    UpdateUavView,
+    DeleteOrUpdateUavAPIView,
     CreateUavView,
     DetailUavView,
 )
@@ -20,7 +20,7 @@ urlpatterns = [
     path("uavs/", ListUavView.as_view(), name="uavs"),
     path("uav/<int:pk>/", DetailUavView.as_view(), name="detail-uav"),
     path("create-uav/", CreateUavView.as_view(), name="create-uav"),
-    path("update-uav/<int:pk>/", UpdateUavView.as_view(), name="update-uav"),
+    path("update-uav/<int:pk>/", DeleteOrUpdateUavAPIView.as_view(), name="update-uav"),
     # Uav Categories
     path("categories/", ListUavCategoryView.as_view(), name="uav-categories"),
     path(
