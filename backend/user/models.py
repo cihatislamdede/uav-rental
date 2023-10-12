@@ -7,14 +7,20 @@ from rest_framework.authtoken.models import Token
 
 
 class CustomUser(AbstractUser):
+    '''
+        is_renter: Boolean field to indicate if user can create UAVs, UAV categories, and UAV brands.
+    '''
+    
     country = models.CharField(max_length=50, null=True, blank=True)
     company = models.CharField(max_length=50, null=True, blank=True)
     is_renter = models.BooleanField(
         default=False, help_text="Check if user is a UAV owner so renter."
     )
 
-
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
+    '''
+        Create a token for every new user created.
+    '''
     if created:
         Token.objects.create(user=instance)

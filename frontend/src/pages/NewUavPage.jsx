@@ -164,6 +164,7 @@ const NewUavPage = () => {
           Create
         </button>
       </form>
+      {/* TODO:  Create Brand and Category */}
     </div>
   );
 };

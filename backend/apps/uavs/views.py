@@ -12,6 +12,9 @@ from .serializers import UavBrandSerializer, UavCategorySerializer, UavSerialize
 
 # Custom Permissions
 class IsUserRenterPermission(BasePermission):
+    '''
+    Custom permission to only allow renters to create uavs, uav categories, and uav brands.
+    '''
     message = "You are not a renter."
 
     def has_permission(self, request, view):

@@ -23,8 +23,10 @@ class Reservation(models.Model):
         ordering = ["-created_at"]
 
     def save(self, *args, **kwargs):
+        # Check if start time is before end time
         if self.start_time > self.end_time:
             raise ValueError("Start time must be before end time.")
+        # Check if UAV is already reserved for this time period
         overlapping_reservations = Reservation.objects.filter(
             uav=self.uav,
             start_time__lt=self.end_time,
