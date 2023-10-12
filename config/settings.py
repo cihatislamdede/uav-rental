@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     # apps
     "user",
     "apps.uavs",
+    "apps.reservations",
     # third party
     "rest_framework",
     "rest_framework.authtoken",
