@@ -1,0 +1,31 @@
+version: '3'
+services:
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      - database
+    environment:
+      - DEBUG=True
+      - POSTGRES_HOST=database
+      - POSTGRES_DB=uav-rental
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_PORT=5432
+      - SECRET_KEY=4!k$0(&bdn%@nwnnajv1y=ppt0f(@68(x(9t92n7!nf229#-&+
+    command: ["bash", "-c", "python manage.py migrate && python manage.py test && python manage.py runserver 0.0.0.0:8000"]
+  database:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: uav-rental
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+    ports:
+      - "5432:5432"
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "5173:5173"

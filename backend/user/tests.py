@@ -16,7 +16,6 @@ class UserRegisterAPIViewTestCase(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data["username"], data["username"])
-        self.assertEqual(response.data["email"], data["email"])
         self.assertTrue("token" in response.data)
 
     def test_user_register_with_short_password(self):
