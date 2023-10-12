@@ -47,6 +47,8 @@ class Uav(models.Model):
     model = models.CharField(max_length=50)
     category = models.ForeignKey(UavCategory, on_delete=models.CASCADE)
 
+    hourly_rate = models.FloatField(help_text="USD", default=0.0)
+    
     payload_capacity = models.FloatField(help_text="kg", blank=True, null=True)
     maximum_speed = models.FloatField(help_text="knots", blank=True, null=True)
     wingspan = models.FloatField(help_text="meters", blank=True, null=True)
