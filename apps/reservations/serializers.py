@@ -7,7 +7,7 @@ from .models import Reservation
 
 class ReservationSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source="user.username")
-    uav = serializers.PrimaryKeyRelatedField(queryset=Uav.objects.all())
+    uav = serializers.SlugRelatedField(slug_field="model", queryset=Uav.objects.all())
 
     class Meta:
         model = Reservation

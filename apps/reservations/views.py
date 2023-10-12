@@ -20,11 +20,12 @@ class UserIsOwnerOfReservationPermission(BasePermission):
 
 
 class ListReservationsView(ListAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Reservation.objects.filter(is_active=True).order_by("-created_at")
     permission_classes = [IsAuthenticated]
     serializer_class = ReservationSerializer
     filterset_fields = ["user", "uav", "start_time", "end_time"]
-    search_fields = ["user__username", "uav__model"]
+    search_fields = ["user__username", "uav__model", "start_time", "end_time"]
 
 
 class CreateReservationView(APIView):

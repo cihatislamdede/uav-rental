@@ -4,7 +4,7 @@ from .views import (CreateUavBrandView, CreateUavCategoryView, CreateUavView,
                     DeleteOrUpdateUavAPIView, DeleteOrUpdateUavBrandAPIView,
                     DeleteOrUpdateUavCategoryAPIView, DetailUavBrandView,
                     DetailUavCategoryView, DetailUavView, ListUavBrandView,
-                    ListUavCategoryView, ListUavView)
+                    ListUavCategoryView, ListUavView, ListAllBrandsAndCategoriesView)
 
 urlpatterns = [
     # Uavs
@@ -36,4 +36,5 @@ urlpatterns = [
         DeleteOrUpdateUavBrandAPIView.as_view(),
         name="update-uav-brand",
     ),
+    path("all-brands-and-categories/", ListAllBrandsAndCategoriesView.as_view(), name="all-brands-and-categories"),
 ]

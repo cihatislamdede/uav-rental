@@ -20,6 +20,7 @@ class IsUserRenterPermission(BasePermission):
 
 # Uav Views
 class ListUavView(ListAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Uav.objects.filter(is_active=True).order_by("id")
     serializer_class = UavSerializer
     filterset_fields = [
@@ -37,6 +38,10 @@ class ListUavView(ListAPIView):
         "brand__company",
         "model",
         "category__class_name",
+        "payload_capacity",
+        "maximum_speed",
+        "wingspan",
+        "endurance",
     ]
 
 
@@ -92,9 +97,11 @@ class DeleteOrUpdateUavAPIView(APIView):
 
 # Uav Category Views
 class ListUavCategoryView(ListAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = UavCategory.objects.filter(is_active=True).order_by("id")
     serializer_class = UavCategorySerializer
     filterset_fields = ["owner", "category", "class_name", "operating_altitude"]
+    search_fields = ["owner__username", "category", "class_name", "operating_altitude"]
 
 
 class CreateUavCategoryView(APIView):
@@ -147,9 +154,11 @@ class DeleteOrUpdateUavCategoryAPIView(APIView):
 
 # Uav Brand Views
 class ListUavBrandView(ListAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = UavBrand.objects.filter(is_active=True).order_by("id")
     serializer_class = UavBrandSerializer
     filterset_fields = ["owner", "company", "country", "website"]
+    search_fields = ["owner__username", "company", "country", "website"]
 
 
 class CreateUavBrandView(APIView):
@@ -198,3 +207,21 @@ class DeleteOrUpdateUavBrandAPIView(APIView):
         brand.is_active = False
         brand.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ListAllBrandsAndCategoriesView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        brands = UavBrand.objects.filter(is_active=True).order_by("id")
+        categories = UavCategory.objects.filter(is_active=True).order_by("id")
+        brands_serializer = UavBrandSerializer(brands, many=True)
+        categories_serializer = UavCategorySerializer(categories, many=True)
+
+        return Response(
+            {
+                "brands": brands_serializer.data,
+                "categories": categories_serializer.data,
+            },
+            status=status.HTTP_200_OK,
+        )

@@ -31,8 +31,12 @@ class UavCategorySerializer(serializers.ModelSerializer):
 
 class UavSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source="owner.username")
-    brand = serializers.PrimaryKeyRelatedField(queryset=UavBrand.objects.all())
-    category = serializers.PrimaryKeyRelatedField(queryset=UavCategory.objects.all())
+    brand = serializers.SlugRelatedField(
+        slug_field="id", queryset=UavBrand.objects.all()
+    )
+    category = serializers.SlugRelatedField(
+        slug_field="id", queryset=UavCategory.objects.all()
+    )
 
     class Meta:
         model = Uav
