@@ -25,7 +25,13 @@ class ListReservationsView(ListAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = ReservationSerializer
     filterset_fields = ["user", "uav", "start_time", "end_time"]
-    search_fields = ["user__username", "uav__model", "start_time", "end_time"]
+    search_fields = [
+        "user__username",
+        "uav__model",
+        "start_time",
+        "end_time",
+        "created_at",
+    ]
 
 
 class CreateReservationView(APIView):
@@ -47,7 +53,7 @@ class RetrieveUpdateDestroyReservationView(APIView):
     permission_classes = [IsAuthenticated, UserIsOwnerOfReservationPermission]
 
     def get_object(self, pk):
-        return get_object_or_404(Reservation, pk=pk)
+        return get_object_or_404(Reservation, pk=pk, is_active=True)
 
     def get(self, request, pk):
         reservation = self.get_object(pk)
@@ -60,7 +66,7 @@ class RetrieveUpdateDestroyReservationView(APIView):
         serializer = ReservationSerializer(reservation, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):

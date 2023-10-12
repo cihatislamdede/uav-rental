@@ -61,7 +61,7 @@ class DetailUavView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, pk):
-        uav = get_object_or_404(Uav, pk=pk)
+        uav = get_object_or_404(Uav, pk=pk, is_active=True)
         serializer = UavSerializer(uav)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -71,7 +71,7 @@ class DeleteOrUpdateUavAPIView(APIView):
     parser_classes = (MultiPartParser, FormParser, JSONParser)
 
     def put(self, request, pk):
-        uav = get_object_or_404(Uav, pk=pk)
+        uav = get_object_or_404(Uav, pk=pk, is_active=True)
         if request.user != uav.owner:
             return Response(
                 {"detail": "You do not have permission to perform this action."},
@@ -84,7 +84,7 @@ class DeleteOrUpdateUavAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
-        uav = get_object_or_404(Uav, pk=pk)
+        uav = get_object_or_404(Uav, pk=pk, is_active=True)
         if request.user != uav.owner:
             return Response(
                 {"detail": "You do not have permission to perform this action."},
@@ -119,7 +119,7 @@ class DetailUavCategoryView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, pk):
-        category = get_object_or_404(UavCategory, pk=pk)
+        category = get_object_or_404(UavCategory, pk=pk, is_active=True)
         serializer = UavCategorySerializer(category)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -128,7 +128,7 @@ class DeleteOrUpdateUavCategoryAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def put(self, request, pk):
-        category = get_object_or_404(UavCategory, pk=pk)
+        category = get_object_or_404(UavCategory, pk=pk, is_active=True)
         if request.user != category.owner:
             return Response(
                 {"detail": "You do not have permission to perform this action."},
@@ -141,7 +141,7 @@ class DeleteOrUpdateUavCategoryAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
-        category = get_object_or_404(UavCategory, pk=pk)
+        category = get_object_or_404(UavCategory, pk=pk, is_active=True)
         if request.user != category.owner:
             return Response(
                 {"detail": "You do not have permission to perform this action."},
@@ -176,7 +176,7 @@ class DetailUavBrandView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, pk):
-        brand = get_object_or_404(UavBrand, pk=pk)
+        brand = get_object_or_404(UavBrand, pk=pk, is_active=True)
         serializer = UavBrandSerializer(brand)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -185,7 +185,7 @@ class DeleteOrUpdateUavBrandAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def put(self, request, pk):
-        brand = get_object_or_404(UavBrand, pk=pk)
+        brand = get_object_or_404(UavBrand, pk=pk, is_active=True)
         if request.user != brand.owner:
             return Response(
                 {"detail": "You do not have permission to perform this action."},
@@ -198,7 +198,7 @@ class DeleteOrUpdateUavBrandAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
-        brand = get_object_or_404(UavBrand, pk=pk)
+        brand = get_object_or_404(UavBrand, pk=pk, is_active=True)
         if request.user != brand.owner:
             return Response(
                 {"detail": "You do not have permission to perform this action."},
