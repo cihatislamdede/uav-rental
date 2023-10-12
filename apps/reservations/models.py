@@ -1,6 +1,5 @@
 from django.db import models
 from django.conf import settings
-
 from apps.uavs.models import Uav
 
 
@@ -16,7 +15,7 @@ class Reservation(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.user} - {self.uav}"
+        return f"{self.user} - {self.uav} - {self.start_time} - {self.end_time}"
 
     class Meta:
         verbose_name_plural = "Reservations"
@@ -25,6 +24,13 @@ class Reservation(models.Model):
     def save(self, *args, **kwargs):
         if self.start_time > self.end_time:
             raise ValueError("Start time must be before end time.")
+        overlapping_reservations = Reservation.objects.filter(
+            uav=self.uav,
+            start_time__lt=self.end_time,
+            end_time__gt=self.start_time,
+        ).exclude(pk=self.pk)
+        if overlapping_reservations.exists():
+            raise ValueError("UAV is already reserved for this time.")
         super().save(*args, **kwargs)
 
     def get_total_hours(self):

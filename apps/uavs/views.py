@@ -23,7 +23,7 @@ class UserCanModifyUavBrandPermission(BasePermission):
 
     def has_permission(self, request, view):
         brand = UavBrand.objects.get(pk=view.kwargs["pk"])
-        if brand.owner == request.user or request.user.is_superuser:
+        if brand.owner == request.user:
             return True
 
 
@@ -40,6 +40,12 @@ class ListUavView(ListAPIView):
         "maximum_speed",
         "wingspan",
         "endurance",
+    ]
+    search_fields = [
+        "owner__username",
+        "brand__company",
+        "model",
+        "category__class_name",
     ]
 
 

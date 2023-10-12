@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.core.validators import MinValueValidator
 
 
 class UavBrand(models.Model):
@@ -26,7 +27,9 @@ class UavCategory(models.Model):
 
     category = models.CharField(max_length=50, unique=True)
     class_name = models.CharField(max_length=50, blank=True, null=True)
-    operating_altitude = models.FloatField(help_text="feet", blank=True, null=True)
+    operating_altitude = models.FloatField(
+        help_text="feet", blank=True, null=True, validators=[MinValueValidator(0)]
+    )
 
     is_active = models.BooleanField(default=True)
 
@@ -47,12 +50,22 @@ class Uav(models.Model):
     model = models.CharField(max_length=50)
     category = models.ForeignKey(UavCategory, on_delete=models.CASCADE)
 
-    hourly_rate = models.FloatField(help_text="USD", default=0.0)
-    
-    payload_capacity = models.FloatField(help_text="kg", blank=True, null=True)
-    maximum_speed = models.FloatField(help_text="knots", blank=True, null=True)
-    wingspan = models.FloatField(help_text="meters", blank=True, null=True)
-    endurance = models.FloatField(help_text="hours", blank=True, null=True)
+    hourly_rate = models.FloatField(
+        help_text="USD", default=0.0, validators=[MinValueValidator(0)]
+    )
+
+    payload_capacity = models.FloatField(
+        help_text="kg", blank=True, null=True, validators=[MinValueValidator(0)]
+    )
+    maximum_speed = models.FloatField(
+        help_text="knots", blank=True, null=True, validators=[MinValueValidator(0)]
+    )
+    wingspan = models.FloatField(
+        help_text="meters", blank=True, null=True, validators=[MinValueValidator(0)]
+    )
+    endurance = models.FloatField(
+        help_text="hours", blank=True, null=True, validators=[MinValueValidator(0)]
+    )
 
     image = models.ImageField(upload_to="uav_images", blank=True, null=True)
 
