@@ -37,6 +37,17 @@ This is a Django project for UAV rental. Also there is a web application that al
 
 You can run this project with Docker. You can follow the steps below. If you don't want to use Docker, you can follow the steps in the [without docker](#without-docker) section.
 
+Before the following steps, you need to create a `.env` file in the `backend` folder. You can use this template:
+
+```bash
+SECRET_KEY=<any-secret-key>
+DEBUG=True
+POSTGRES_DB=<your-db-name>
+POSTGRES_USER=<your-username>
+POSTGRES_HOST=<your-host>
+POSTGRES_PASSWORD=<your-password>
+```
+
 ### With Docker
 
 > If you have not installed Docker yet, you can install it from [here](https://docs.docker.com/get-docker/).
