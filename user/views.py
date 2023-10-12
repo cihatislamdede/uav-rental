@@ -18,7 +18,7 @@ class UserRegisterAPIView(APIView):
                 token = Token.objects.get(user=user).key
                 response = {
                     "token": token,
-                    "email": user.email,
+                    "id": user.id,
                     "username": user.username,
                     "is_renter": user.is_renter,
                 }
@@ -47,7 +47,7 @@ class UserLoginAPIView(APIView):
         token, _ = Token.objects.get_or_create(user=user)
         response = {
             "token": token.key,
-            "email": user.email,
+            "id": user.id,
             "username": user.username,
             "is_renter": user.is_renter,
         }
