@@ -30,12 +30,6 @@ const Navbar = () => {
             >
               Logout
             </Link>
-            <Link
-              to="/profile"
-              className="text-lg font-semibold hover:dark:text-gray-400 hover:text-gray-600 transition-all"
-            >
-              Profile
-            </Link>
           </div>
         ) : (
           <Link

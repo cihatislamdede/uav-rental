@@ -29,7 +29,7 @@ const Login = () => {
       return;
     }
     axios.post(API_URL + "/auth/login/", formData).then((res) => {
-      setCookie("user", res.data, { path: "/" });
+      setCookie("user", res.data, { path: "/" , secure: true, expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)});
       toast.success("Logged in successfully");
       window.location.href = "/";
     }).catch((err) => {
