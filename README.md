@@ -21,6 +21,7 @@ This is a Django project for UAV rental. Also there is a web application that al
   * [*django-filter*](https://pypi.org/project/django-filter/)
   * [*django-cors-headers*](https://pypi.org/project/django-cors-headers/)
   * [*python-decouple*](https://pypi.org/project/python-decouple/)
+  * [drf-yasg](https://drf-yasg.readthedocs.io/en/stable/)
 * [PostgreSQL](https://www.postgresql.org/)
 * [Tailwind CSS](https://tailwindcss.com/)
 * [Vite.js](https://vitejs.dev/)
@@ -83,7 +84,7 @@ npm run dev
 
 You can access:
 
-* Backend: <http://localhost:8000>
+* Backend: <http://localhost:8000> (Swagger UI)
 * Frontend: <http://localhost:5173>
 
 ## Screenshots
