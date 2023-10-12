@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import UavBrand, UavCategory, Uav
+
+from .models import Uav, UavBrand, UavCategory
 
 
 class UavAdmin(admin.ModelAdmin):

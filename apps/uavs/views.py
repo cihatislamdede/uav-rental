@@ -1,30 +1,21 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated, BasePermission
+from rest_framework.generics import ListAPIView
+from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
+from rest_framework.permissions import BasePermission, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.generics import ListAPIView
-from .serializers import UavBrandSerializer, UavCategorySerializer, UavSerializer
+
 from .models import Uav, UavBrand, UavCategory
-from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+from .serializers import UavBrandSerializer, UavCategorySerializer, UavSerializer
 
 
 # Custom Permissions
-class UserIsRenterPermission(BasePermission):
+class IsUserRenterPermission(BasePermission):
     message = "You are not a renter."
 
     def has_permission(self, request, view):
-        if request.user.is_renter or request.user.is_superuser:
-            return True
-        return False
-
-
-class UserCanModifyUavBrandPermission(BasePermission):
-    message = "You do not have permission to modify or delete this brand."
-
-    def has_permission(self, request, view):
-        brand = UavBrand.objects.get(pk=view.kwargs["pk"])
-        if brand.owner == request.user:
-            return True
+        return request.user.is_renter or request.user.is_superuser
 
 
 # Uav Views
@@ -50,7 +41,7 @@ class ListUavView(ListAPIView):
 
 
 class CreateUavView(APIView):
-    permission_classes = [IsAuthenticated & UserIsRenterPermission]
+    permission_classes = [IsAuthenticated & IsUserRenterPermission]
     parser_classes = (MultiPartParser, FormParser, JSONParser)
 
     def post(self, request):
@@ -65,17 +56,22 @@ class DetailUavView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, pk):
-        uav = Uav.objects.get(pk=pk)
+        uav = get_object_or_404(Uav, pk=pk)
         serializer = UavSerializer(uav)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class DeleteOrUpdateUavAPIView(APIView):
-    permission_classes = [IsAuthenticated & UserIsRenterPermission]
+    permission_classes = [IsAuthenticated & IsUserRenterPermission]
     parser_classes = (MultiPartParser, FormParser, JSONParser)
 
     def put(self, request, pk):
-        uav = Uav.objects.get(pk=pk)
+        uav = get_object_or_404(Uav, pk=pk)
+        if request.user != uav.owner:
+            return Response(
+                {"detail": "You do not have permission to perform this action."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         serializer = UavSerializer(uav, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -83,7 +79,14 @@ class DeleteOrUpdateUavAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
-        Uav.objects.filter(pk=pk).update(is_active=False)
+        uav = get_object_or_404(Uav, pk=pk)
+        if request.user != uav.owner:
+            return Response(
+                {"detail": "You do not have permission to perform this action."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        uav.is_active = False
+        uav.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -95,7 +98,7 @@ class ListUavCategoryView(ListAPIView):
 
 
 class CreateUavCategoryView(APIView):
-    permission_classes = [IsAuthenticated & UserIsRenterPermission]
+    permission_classes = [IsAuthenticated & IsUserRenterPermission]
 
     def post(self, request):
         serializer = UavCategorySerializer(data=request.data)
@@ -109,16 +112,21 @@ class DetailUavCategoryView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, pk):
-        category = UavCategory.objects.get(pk=pk)
+        category = get_object_or_404(UavCategory, pk=pk)
         serializer = UavCategorySerializer(category)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class DeleteOrUpdateUavCategoryAPIView(APIView):
-    permission_classes = [IsAuthenticated & UserIsRenterPermission]
+    permission_classes = [IsAuthenticated]
 
     def put(self, request, pk):
-        category = UavCategory.objects.get(pk=pk)
+        category = get_object_or_404(UavCategory, pk=pk)
+        if request.user != category.owner:
+            return Response(
+                {"detail": "You do not have permission to perform this action."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         serializer = UavCategorySerializer(category, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -126,7 +134,14 @@ class DeleteOrUpdateUavCategoryAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
-        UavCategory.objects.filter(pk=pk).update(is_active=False)
+        category = get_object_or_404(UavCategory, pk=pk)
+        if request.user != category.owner:
+            return Response(
+                {"detail": "You do not have permission to perform this action."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        category.is_active = False
+        category.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -138,7 +153,7 @@ class ListUavBrandView(ListAPIView):
 
 
 class CreateUavBrandView(APIView):
-    permission_classes = [IsAuthenticated & UserIsRenterPermission]
+    permission_classes = [IsAuthenticated & IsUserRenterPermission]
 
     def post(self, request):
         serializer = UavBrandSerializer(data=request.data)
@@ -152,16 +167,21 @@ class DetailUavBrandView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, pk):
-        brand = UavBrand.objects.get(pk=pk)
+        brand = get_object_or_404(UavBrand, pk=pk)
         serializer = UavBrandSerializer(brand)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class DeleteOrUpdateUavBrandAPIView(APIView):
-    permission_classes = [IsAuthenticated & UserCanModifyUavBrandPermission]
+    permission_classes = [IsAuthenticated]
 
     def put(self, request, pk):
-        brand = UavBrand.objects.get(pk=pk)
+        brand = get_object_or_404(UavBrand, pk=pk)
+        if request.user != brand.owner:
+            return Response(
+                {"detail": "You do not have permission to perform this action."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         serializer = UavBrandSerializer(brand, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -169,5 +189,12 @@ class DeleteOrUpdateUavBrandAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
-        UavBrand.objects.filter(pk=pk).update(is_active=False)
+        brand = get_object_or_404(UavBrand, pk=pk)
+        if request.user != brand.owner:
+            return Response(
+                {"detail": "You do not have permission to perform this action."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        brand.is_active = False
+        brand.save()
         return Response(status=status.HTTP_204_NO_CONTENT)

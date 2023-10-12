@@ -1,22 +1,22 @@
+from django.db import transaction
+from django.shortcuts import get_object_or_404
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated, BasePermission
+from rest_framework.generics import ListAPIView
+from rest_framework.permissions import BasePermission, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.generics import ListAPIView
-from django.db import transaction
-from .serializers import ReservationSerializer
 
 from .models import Reservation
+from .serializers import ReservationSerializer
 
 
+# Custom permission to check if the user is the owner of the reservation
 class UserIsOwnerOfReservationPermission(BasePermission):
     message = "You are not the owner of this reservation."
 
     def has_permission(self, request, view):
         reservation = Reservation.objects.get(pk=view.kwargs["pk"])
-        if request.user == reservation.user:
-            return True
-        return False
+        return request.user == reservation.user
 
 
 class ListReservationsView(ListAPIView):
@@ -24,7 +24,7 @@ class ListReservationsView(ListAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = ReservationSerializer
     filterset_fields = ["user", "uav", "start_time", "end_time"]
-    search_fields = ["user__username", "uav__name"]
+    search_fields = ["user__username", "uav__model"]
 
 
 class CreateReservationView(APIView):
@@ -46,10 +46,7 @@ class RetrieveUpdateDestroyReservationView(APIView):
     permission_classes = [IsAuthenticated, UserIsOwnerOfReservationPermission]
 
     def get_object(self, pk):
-        try:
-            return Reservation.objects.get(pk=pk)
-        except Reservation.DoesNotExist:
-            raise status.HTTP_404_NOT_FOUND
+        return get_object_or_404(Reservation, pk=pk)
 
     def get(self, request, pk):
         reservation = self.get_object(pk)
@@ -61,7 +58,7 @@ class RetrieveUpdateDestroyReservationView(APIView):
         reservation = self.get_object(pk)
         serializer = ReservationSerializer(reservation, data=request.data, partial=True)
         if serializer.is_valid():
-            serializer.save(user=request.user)
+            serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

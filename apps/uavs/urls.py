@@ -1,19 +1,10 @@
 from django.urls import path
 
-from .views import (
-    CreateUavBrandView,
-    CreateUavCategoryView,
-    DeleteOrUpdateUavBrandAPIView,
-    DeleteOrUpdateUavCategoryAPIView,
-    DetailUavBrandView,
-    DetailUavCategoryView,
-    ListUavBrandView,
-    ListUavCategoryView,
-    ListUavView,
-    DeleteOrUpdateUavAPIView,
-    CreateUavView,
-    DetailUavView,
-)
+from .views import (CreateUavBrandView, CreateUavCategoryView, CreateUavView,
+                    DeleteOrUpdateUavAPIView, DeleteOrUpdateUavBrandAPIView,
+                    DeleteOrUpdateUavCategoryAPIView, DetailUavBrandView,
+                    DetailUavCategoryView, DetailUavView, ListUavBrandView,
+                    ListUavCategoryView, ListUavView)
 
 urlpatterns = [
     # Uavs

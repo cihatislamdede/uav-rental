@@ -1,6 +1,6 @@
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 from rest_framework import status
-from django.contrib.auth import get_user_model
 
 
 class UserRegisterAPIViewTestCase(TestCase):
@@ -10,7 +10,9 @@ class UserRegisterAPIViewTestCase(TestCase):
             "email": "test@test.com",
             "password": "newpassword111",
         }
-        response = self.client.post("/api/auth/register/", data)
+        response = self.client.post(
+            "/api/auth/register/", data, content_type="application/json"
+        )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data["username"], data["username"])
@@ -24,7 +26,9 @@ class UserRegisterAPIViewTestCase(TestCase):
             "password": "test",
         }
 
-        response = self.client.post("/api/auth/register/", data)
+        response = self.client.post(
+            "/api/auth/register/", data, content_type="application/json"
+        )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -42,7 +46,9 @@ class UserLoginAPIViewTestCase(TestCase):
             "username": "testcase",
             "password": "newpassword111",
         }
-        response = self.client.post("/api/auth/login/", data)
+        response = self.client.post(
+            "/api/auth/login/", data, content_type="application/json"
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["username"], data["username"])
         self.assertTrue("token" in response.data)
@@ -52,7 +58,9 @@ class UserLoginAPIViewTestCase(TestCase):
             "username": "testcase",
             "password": "wrongpassword",
         }
-        response = self.client.post("/api/auth/login/", data)
+        response = self.client.post(
+            "/api/auth/login/", data, content_type="application/json"
+        )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 
@@ -69,7 +77,9 @@ class UserLogoutAPIViewTestCase(TestCase):
             "username": "testcase",
             "password": "newpassword111",
         }
-        response = self.client.post("/api/auth/login/", data)
+        response = self.client.post(
+            "/api/auth/login/", data, content_type="application/json"
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["username"], data["username"])
         self.assertTrue("token" in response.data)
